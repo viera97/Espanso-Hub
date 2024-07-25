@@ -1,0 +1,30 @@
+# Password Generator
+matches:
+
+  - regex: :genpass\((?P<myvar>\d*)\)
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: script
+        params:
+          args: 
+            - python
+            - -c
+            - |
+              import random, string
+              characters = string.ascii_letters + string.punctuation + string.digits
+              n = max(4, int('{{myvar}}') if '{{myvar}}'.isdigit() else 12)
+              while True:
+                password = ''.join(random.choice(characters) for _ in range(n))
+                if (any(c.islower() for c in password) and any(c.isupper() for c in password) and any(c in string.punctuation for c in password) and any(c.isdigit() for c in password)):
+                  break
+              try:
+                import pyperclip
+                pyperclip.copy(password)
+              except:
+                pass
+              print(password)
+          
+          
+
+          
